@@ -1,46 +1,50 @@
 package com.example.springrestapis.service;
 
 
-import com.example.springrestapis.dao.EmployeeDAO;
+import com.example.springrestapis.dao.EmployeeRepository;
 import com.example.springrestapis.entity.Employee;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService{
 
-    EmployeeDAO employeeDAO;
+    private EmployeeRepository employeeRepository;
 
     @Autowired
-    public EmployeeServiceImpl(EmployeeDAO employeeDAO) {
-        this.employeeDAO = employeeDAO;
+    public EmployeeServiceImpl(EmployeeRepository employeeRepository) {
+        this.employeeRepository = employeeRepository;
     }
 
     @Override
-    @Transactional
     public List<Employee> findAll() {
-        return employeeDAO.findAll();
+        return employeeRepository.findAll();
     }
 
     @Override
-    @Transactional
     public Employee findById(int theId) {
-        return employeeDAO.findById(theId);
+        Optional<Employee> employee = employeeRepository.findById(theId);
+        Employee employee1 = null;
+        if(employee.isPresent()){
+            employee1 = employee.get();
+        } else {
+            throw new RuntimeException("couldnt find the given id" + theId);
+        }
+        return employee1;
     }
 
     @Override
-    @Transactional
     public void save(Employee employee) {
-        employeeDAO.save(employee);
+        employeeRepository.save(employee);
     }
 
     @Override
-    @Transactional
     public void deleteById(int theId) {
-        employeeDAO.deleteById(theId);
+        employeeRepository.deleteById(theId);
     }
 
 }
